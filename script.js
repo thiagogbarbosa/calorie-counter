@@ -32,7 +32,7 @@ function addEntry() {
   targetInputContainer.insertAdjacentHTML('beforeend', HTMLString);
 };
 
-function getCaloriesFromInputs(inputs){
+function getCaloriesFromInputs(list){
   let calories = 0;
 
   for (const item of list){
