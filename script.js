@@ -1,3 +1,4 @@
+// Getting DOM elements
 const calorieCounter = document.getElementById('calorie-counter');
 const budgetNumberInput = document.getElementById('budget');
 const entryDropdown = document.getElementById('entry-dropdown');
@@ -6,16 +7,19 @@ const clearButton = document.getElementById('clear');
 const output = document.getElementById('output');
 let isError = false;
 
+// Removing undesirable characters and replacing with an empty string
 function cleanInputString(str) {
   const regex = /[+-\s]/g;
   return str.replace(regex, '');
-}
-
-function isInvalidInput(str) {
-  const regex = /\d+e\d+/i;
-  return str.match(regex);
 };
 
+// Avoiding scientific notations 1e3(1000) for example.
+function isInvalidInput(str) {
+  const regex = /\d+e\d+/i;
+  return str.match(regex); // null or substrings array
+};
+
+// addEntry adds new entry fields (name and calories) to the selected input container
 function addEntry() {
   const targetInputContainer = document.querySelector(`#${entryDropdown.value} .input-container`);
   const entryNumber = targetInputContainer.querySelectorAll('input[type="text"]').length + 1;
@@ -33,14 +37,17 @@ function addEntry() {
 };
 
 function calculateCalories(e){
-  e.preventDefault();
+  e.preventDefault(); // Prevent the form submission
   isError = false;
+
+  // Select all input fields for exercise, snacks, dinner, breakfast and lunch
   const exerciseNumberInputs = document.querySelectorAll('#exercise input[type=number]');
   const snacksNumberInputs = document.querySelectorAll('#snacks input[type=number]');
   const dinnerNumberInputs = document.querySelectorAll('#dinner input[type=number]');
   const breakfastNumberInputs = document.querySelectorAll('#breakfast input[type=number]');
   const lunchNumberInputs = document.querySelectorAll('#lunch input[type=number]');
-
+  
+  // Calculate the calories consumed using getCaloriesFromInputs and the budgeted calories
   const breakfastCalories = getCaloriesFromInputs(breakfastNumberInputs);
   const lunchCalories = getCaloriesFromInputs(lunchNumberInputs);
   const dinnerCalories = getCaloriesFromInputs(dinnerNumberInputs);
@@ -54,7 +61,7 @@ function calculateCalories(e){
 
   const consumedCalories = breakfastCalories + lunchCalories + dinnerCalories + snacksCalories;
   const remainingCalories = budgetCalories - consumedCalories + exerciseCalories;
-  const surplusOrDeficit = remainingCalories <0 ? "Surplus" : "Deficit";
+  const surplusOrDeficit = remainingCalories <0 ? "Surplus" : "Deficit"; // determining if there is a surplus or deficit
   output.innerHTML = `
   <span class="${surplusOrDeficit.toLowerCase()}">${Math.abs(remainingCalories)} Calorie ${surplusOrDeficit}</span>
   <hr>
@@ -65,11 +72,12 @@ function calculateCalories(e){
   output.classList.remove('hide');
 };
 
+// Extracting calorie values from inputs
 function getCaloriesFromInputs(list){
   let calories = 0;
 
   for (const item of list){
-    const currVal = cleanInputString(item.value);
+    const currVal = cleanInputString(item.value); // remove +, - or space
     const invalidInputMatch = isInvalidInput(currVal);
     if (invalidInputMatch) {
       alert(`Invalid Input: ${invalidInputMatch[0]}`);
@@ -81,6 +89,7 @@ function getCaloriesFromInputs(list){
   return calories;
 };
 
+// Clearing the form
 function clearForm() {
   const inputContainers = Array.from(document.querySelectorAll('.input-container'));
 
